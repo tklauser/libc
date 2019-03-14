@@ -1206,6 +1206,19 @@ pub const IN_ALL_EVENTS:    ::uint32_t = (
 pub const IN_CLOEXEC: ::c_int = O_CLOEXEC;
 pub const IN_NONBLOCK: ::c_int = O_NONBLOCK;
 
+// uapi/linux/fanotify.h
+pub const FAN_ACCESS:        ::uint32_t = 0x0000_0001;
+pub const FAN_MODIFY:        ::uint32_t = 0x0000_0002;
+pub const FAN_CLOSE_WRITE:   ::uint32_t = 0x0000_0008;
+pub const FAN_CLOSE_NOWRITE: ::uint32_t = 0x0000_0010;
+pub const FAN_CLOSE:         ::uint32_t = (IN_CLOSE_WRITE | IN_CLOSE_NOWRITE);
+pub const FAN_OPEN:          ::uint32_t = 0x0000_0020;
+
+pub const FAN_Q_OVERFLOW:    ::uint32_t = 0x0000_4000;
+
+pub const FAN_OPEN_PERM:     ::uint32_t = 0x0001_0000;
+pub const FAN_ACCESS_PERM:   ::uint32_t = 0x0002_0000;
+
 fn CMSG_ALIGN(len: usize) -> usize {
     len + ::mem::size_of::<usize>() - 1 & !(::mem::size_of::<usize>() - 1)
 }
@@ -1463,6 +1476,10 @@ extern {
     pub fn inotify_add_watch(fd: ::c_int,
                              path: *const ::c_char,
                              mask: ::uint32_t) -> ::c_int;
+    pub fn fanotify_init(flags: ::c_uint,
+                         event_f_flags: ::c_uint) -> ::c_int;
+    pub fn fanotify_mark(fd: ::c_int, flags: ::c_uint, mask: ::uint64_t,
+                         dirfd: ::c_int, pathname: *const *const ::c_char) -> ::c_int;
 }
 
 cfg_if! {
